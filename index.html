@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZUi PRO Studio | Batch Architect</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;900&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #000000;
+            --panel: #0a0a0a;
+            --accent: #ffffff;
+            --border: #1a1a1a;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: #fff;
+            overflow-x: hidden;
+        }
+
+        .glass-panel {
+            background: var(--panel);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+        }
+
+        .zui-preview-box {
+            background-image: radial-gradient(#1a1a1a 1px, transparent 1px);
+            background-size: 24px 24px;
+            min-height: 280px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 16px;
+        }
+
+        #zui-live-view {
+            width: 280px;
+            height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
+            letter-spacing: 2px;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Modal / Window */
+        #code-modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.95);
+            z-index: 1000;
+            backdrop-filter: blur(15px);
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal-content {
+            background: #0d0d0d;
+            border: 1px solid #222;
+            width: 100%;
+            max-width: 900px;
+            border-radius: 16px;
+            max-height: 90vh;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        .code-display {
+            font-family: 'Fira Code', monospace;
+            background: #050505;
+            color: #d1d1d1;
+            padding: 2rem;
+            font-size: 0.85rem;
+            line-height: 1.7;
+            overflow: auto;
+            flex-grow: 1;
+        }
+
+        /* Syntax Highlighting */
+        .token-keyword { color: #569cd6; }
+        .token-class { color: #4ec9b0; }
+        .token-method { color: #dcdcaa; }
+        .token-string { color: #ce9178; }
+        .token-number { color: #b5cea8; }
+        .token-comment { color: #6a9955; }
+
+        .ripple-layer {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            transform: scale(0);
+            animation: ripple-effect 0.5s linear;
+            pointer-events: none;
+        }
+
+        @keyframes ripple-effect { to { transform: scale(4); opacity: 0; } }
+
+        input[type="range"] {
+            -webkit-appearance: none;
+            background: #222;
+            height: 4px;
+            border-radius: 2px;
+            accent-color: #fff;
+        }
+
+        /* Custom Toggle Switch */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 40px;
+            height: 20px;
+        }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #222;
+            transition: .4s;
+            border-radius: 20px;
+        }
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 14px; width: 14px;
+            left: 3px; bottom: 3px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        input:checked + .slider { background-color: #444; }
+        input:checked + .slider:before { transform: translateX(20px); }
+
+        .picker-wrapper {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            border: 2px solid #222;
+            overflow: hidden;
+            position: relative;
+        }
+        .picker-wrapper input[type="color"] {
+            position: absolute;
+            top: -5px; left: -5px;
+            width: 50px; height: 50px;
+            cursor: pointer;
+        }
+
+        .custom-scroll::-webkit-scrollbar { width: 5px; }
+        .custom-scroll::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
+
+        .template-btn {
+            background: #000;
+            border: 1px solid #222;
+            padding: 12px;
+            border-radius: 12px;
+            text-align: left;
+            transition: all 0.2s;
+        }
+        .template-btn:hover {
+            border-color: #444;
+            transform: translateY(-2px);
+        }
+
+        select {
+            background: #000;
+            color: white;
+            border: 1px solid #222;
+            padding: 4px 8px;
+            border-radius: 8px;
+            font-size: 10px;
+            font-weight: bold;
+            outline: none;
+            cursor: pointer;
+        }
+        select:hover { border-color: #444; }
+
+        /* Ad Scaling Logic */
+        .ad-wrapper-728 {
+            width: 100%; 
+            overflow: hidden; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center;
+        }
+        .ad-scaler {
+            transform-origin: top center;
+        }
+
+        @media screen and (max-width: 768px) {
+            .ad-scaler {
+                transform: scale(calc(100vw / 760)); 
+            }
+            .ad-wrapper-728 {
+                height: calc(90px * (100vw / 760));
+            }
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+
+    <div class="max-w-7xl mx-auto">
+        <!-- Header -->
+        <header class="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
+            <div>
+                <h1 class="text-3xl font-black tracking-tighter uppercase">ZUi PRO <span class="font-light opacity-30 text-white">STUDIO</span></h1>
+                <p class="text-[9px] tracking-[0.4em] opacity-40 font-bold">BATCH ENGINE V3.5 // BY ZELVIOR</p>
+            </div>
+            <div class="flex items-center gap-4">
+                <div class="hidden md:flex items-center gap-2 text-[10px] bg-white/5 border border-white/10 px-4 py-2 rounded-full uppercase font-bold tracking-widest">
+                    <div class="w-1.5 h-1.5 bg-yellow-500 rounded-full animate-pulse"></div> Advanced Mode
+                </div>
+            </div>
+        </header>
+
+        <!-- TOP AD PLACEMENT -->
+        <div class="ad-wrapper-728 mb-8">
+            <div class="ad-scaler">
+                <script>
+                atOptions = {
+                    'key' : '69f4020e8c77aaf6c40ada31bf1119b5',
+                    'format' : 'iframe',
+                    'height' : 90,
+                    'width' : 728,
+                    'params' : {}
+                };
+                </script>
+                <script src="https://www.highperformanceformat.com/69f4020e8c77aaf6c40ada31bf1119b5/invoke.js"></script>
+            </div>
+        </div>
+
+        <main class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            
+            <!-- Controls Sidebar -->
+            <div class="lg:col-span-5 space-y-6">
+                
+                <!-- Toggle Dashboard -->
+                <div class="glass-panel p-6 grid grid-cols-2 gap-4">
+                    <div class="flex items-center justify-between bg-black/40 p-3 rounded-xl border border-white/5">
+                        <span class="text-[9px] font-black uppercase opacity-60">Attribution</span>
+                        <label class="switch">
+                            <input type="checkbox" id="toggle-attr" checked onchange="updateUI()">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <div class="flex items-center justify-between bg-black/40 p-3 rounded-xl border border-white/5">
+                        <span class="text-[9px] font-black uppercase opacity-60">View Binding</span>
+                        <label class="switch">
+                            <input type="checkbox" id="toggle-binding" checked onchange="updateUI()">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <div class="flex items-center justify-between bg-black/40 p-3 rounded-xl border border-white/5">
+                        <span class="text-[9px] font-black uppercase opacity-60">Ripple Layer</span>
+                        <label class="switch">
+                            <input type="checkbox" id="toggle-ripple" checked onchange="updateUI()">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <div class="flex items-center justify-between bg-black/40 p-3 rounded-xl border border-white/5">
+                        <span class="text-[9px] font-black uppercase opacity-60 text-yellow-500">Batch Mode</span>
+                        <label class="switch">
+                            <input type="checkbox" id="toggle-batch" onchange="toggleBatchMode()">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <div class="flex items-center justify-between bg-black/40 p-3 rounded-xl border border-white/5 col-span-2">
+                        <span class="text-[9px] font-black uppercase opacity-60 text-blue-400">Advanced Corners Card</span>
+                        <label class="switch">
+                            <input type="checkbox" id="toggle-corner-card" onchange="toggleCornerCard()">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <div class="flex items-center justify-between bg-black/40 p-3 rounded-xl border border-white/5 col-span-2">
+                        <span class="text-[9px] font-black uppercase opacity-60 text-purple-400">Templates Card</span>
+                        <label class="switch">
+                            <input type="checkbox" id="toggle-templates-card" onchange="toggleTemplatesCard()">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Corner Radius Advanced Card -->
+                <div id="corner-card" class="glass-panel p-6 space-y-6 hidden border-blue-900/30">
+                    <div class="flex justify-between items-center">
+                        <h2 class="text-[10px] font-black uppercase opacity-40 tracking-widest">Corner Radius Architect</h2>
+                        <div class="flex items-center gap-2">
+                            <span class="text-[8px] font-bold opacity-40 uppercase">Enable Individual</span>
+                            <label class="switch">
+                                <input type="checkbox" id="use-individual-corners" onchange="updateUI()">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-[10px] font-bold uppercase opacity-40 mb-3">Top Left (<span id="tl-val">25</span>dp)</label>
+                            <input type="range" id="corner-tl" min="0" max="100" value="25" oninput="updateUI()" class="w-full">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold uppercase opacity-40 mb-3">Top Right (<span id="tr-val">25</span>dp)</label>
+                            <input type="range" id="corner-tr" min="0" max="100" value="25" oninput="updateUI()" class="w-full">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold uppercase opacity-40 mb-3">Bottom Left (<span id="bl-val">25</span>dp)</label>
+                            <input type="range" id="corner-bl" min="0" max="100" value="25" oninput="updateUI()" class="w-full">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold uppercase opacity-40 mb-3">Bottom Right (<span id="br-val">25</span>dp)</label>
+                            <input type="range" id="corner-br" min="0" max="100" value="25" oninput="updateUI()" class="w-full">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Template Architect Card -->
+                <div id="templates-card" class="glass-panel p-6 space-y-4 hidden border-purple-900/30">
+                    <h2 class="text-[10px] font-black uppercase opacity-40 tracking-widest mb-2">Design Templates</h2>
+                    <div class="grid grid-cols-1 gap-3">
+                        <button onclick="applyTemplate('neon')" class="template-btn group">
+                            <div class="flex items-center gap-3">
+                                <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-pink-500 to-purple-600 border border-pink-400"></div>
+                                <div>
+                                    <p class="text-[10px] font-bold uppercase text-white">Neon Cyber</p>
+                                    <p class="text-[8px] opacity-40 uppercase">Glow & Pink Accents</p>
+                                </div>
+                            </div>
+                        </button>
+                        <button onclick="applyTemplate('clay')" class="template-btn group">
+                            <div class="flex items-center gap-3">
+                                <div class="w-8 h-8 rounded-lg bg-[#E0E0E0] border-2 border-white shadow-inner"></div>
+                                <div>
+                                    <p class="text-[10px] font-bold uppercase text-white">Soft Clay</p>
+                                    <p class="text-[8px] opacity-40 uppercase">Neumorphic & Minimal</p>
+                                </div>
+                            </div>
+                        </button>
+                        <button onclick="applyTemplate('gold')" class="template-btn group">
+                            <div class="flex items-center gap-3">
+                                <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-yellow-400 to-yellow-800 border border-yellow-300"></div>
+                                <div>
+                                    <p class="text-[10px] font-bold uppercase text-white">Royal Gold</p>
+                                    <p class="text-[8px] opacity-40 uppercase">Premium Gradient</p>
+                                </div>
+                            </div>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Main Settings -->
+                <div class="glass-panel p-6 space-y-6">
+                    <div>
+                        <label id="id-label" class="block text-[10px] font-bold uppercase opacity-40 mb-2">Target View ID</label>
+                        <input type="text" id="view-id" value="user_id_input_here" oninput="updateUI()" class="w-full bg-black border border-gray-800 p-3 rounded-xl font-mono text-xs focus:border-white outline-none transition" placeholder="e.g. view1, view2">
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-[10px] font-bold uppercase opacity-40 mb-3">Radius (<span id="rad-val">25</span>dp)</label>
+                            <input type="range" id="radius" min="0" max="100" value="25" oninput="updateUI()" class="w-full">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold uppercase opacity-40 mb-3">Stroke (<span id="str-val">2</span>dp)</label>
+                            <input type="range" id="stroke-w" min="0" max="20" value="2" oninput="updateUI()" class="w-full">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-[10px] font-bold uppercase opacity-40 mb-3">Elevation (<span id="elev-val">5</span>dp)</label>
+                            <input type="range" id="elevation" min="0" max="40" value="5" oninput="updateUI()" class="w-full">
+                        </div>
+                        <div id="ripple-color-container">
+                            <label class="block text-[10px] font-bold uppercase opacity-40 mb-3">Ripple Color</label>
+                            <div class="flex items-center gap-2 bg-black border border-gray-800 rounded-xl p-1.5">
+                                <div class="picker-wrapper">
+                                    <input type="color" id="ripple-color" value="#E0E0E0" oninput="updateUI()">
+                                </div>
+                                <input type="text" id="ripple-color-hex" value="#E0E0E0" class="bg-transparent text-[10px] font-mono outline-none w-full uppercase">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Color Nodes Section -->
+                <div class="glass-panel p-6">
+                    <div class="flex justify-between items-center mb-6">
+                        <div class="flex flex-col">
+                            <h2 class="text-[10px] font-black uppercase opacity-40 tracking-widest">Background Style</h2>
+                            <div class="flex gap-2 mt-2">
+                                <button onclick="setMode('gradient')" id="btn-gradient" class="text-[8px] px-2 py-0.5 rounded border border-white/10 bg-white text-black font-bold uppercase">Gradient</button>
+                                <button onclick="setMode('solid')" id="btn-solid" class="text-[8px] px-2 py-0.5 rounded border border-white/10 font-bold uppercase">Solid</button>
+                            </div>
+                        </div>
+                        <button id="add-color-btn" onclick="addColor()" class="text-[9px] font-black border border-white/10 px-3 py-1.5 rounded-lg hover:bg-white hover:text-black transition uppercase">+ Add Color</button>
+                    </div>
+
+                    <div id="gradient-controls" class="mb-4 pt-2 pb-4 border-b border-white/5">
+                        <div class="flex items-center justify-between">
+                            <label class="text-[10px] font-bold uppercase opacity-40">Gradient Direction</label>
+                            <select id="gradient-direction" onchange="updateUI()">
+                                <option value="TOP_BOTTOM">Top to Bottom</option>
+                                <option value="BOTTOM_TOP">Bottom to Top</option>
+                                <option value="LEFT_RIGHT">Left to Right</option>
+                                <option value="RIGHT_LEFT">Right to Left</option>
+                                <option value="TL_BR">TL to BR</option>
+                                <option value="TR_BL">TR to BL</option>
+                                <option value="BL_TR">BL to TR</option>
+                                <option value="BR_TL">BR to TL</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div id="color-list" class="space-y-3 max-h-[220px] overflow-auto pr-2 custom-scroll"></div>
+                    
+                    <div class="mt-6 pt-6 border-t border-white/5">
+                        <label class="block text-[10px] font-bold uppercase opacity-40 mb-3">Stroke (Border) Color</label>
+                        <div class="flex items-center gap-3 bg-black/50 p-2 rounded-xl border border-gray-900">
+                            <div class="picker-wrapper">
+                                <input type="color" id="stroke-color" value="#008DCD" oninput="updateUI()">
+                            </div>
+                            <input type="text" id="stroke-color-hex" value="#008DCD" class="bg-transparent font-mono text-xs outline-none uppercase w-full">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Preview & Action -->
+            <div class="lg:col-span-7 flex flex-col gap-8">
+                <div class="glass-panel p-4 flex-grow flex flex-col shadow-2xl">
+                    <div class="text-[9px] font-black uppercase opacity-20 mb-6 tracking-[0.3em]">Hardware Render Surface</div>
+                    <div class="zui-preview-box flex-grow">
+                        <div id="zui-live-view">
+                            <span id="preview-text" class="text-[10px] font-black uppercase opacity-80">Interactive Preview</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <button onclick="showCode()" class="w-full bg-white text-black py-6 rounded-2xl font-black text-xs uppercase tracking-[0.3em] hover:scale-[1.02] active:scale-[0.98] transition-all shadow-[0_20px_50px_rgba(255,255,255,0.1)]">
+                    Generate Code
+                </button>
+            </div>
+        </main>
+
+        <!-- BOTTOM AD PLACEMENT -->
+        <div class="ad-wrapper-728 mt-12 mb-4">
+            <div class="ad-scaler">
+                <script>
+                atOptions = {
+                    'key' : '69f4020e8c77aaf6c40ada31bf1119b5',
+                    'format' : 'iframe',
+                    'height' : 90,
+                    'width' : 728,
+                    'params' : {}
+                };
+                </script>
+                <script src="https://www.highperformanceformat.com/69f4020e8c77aaf6c40ada31bf1119b5/invoke.js"></script>
+            </div>
+        </div>
+    </div>
+
+    <!-- Code Modal -->
+    <div id="code-modal">
+        <div class="modal-content">
+            <div class="flex justify-between items-center p-5 border-b border-white/5 bg-[#111]">
+                <div class="flex items-center gap-3">
+                    <span class="w-2 h-2 bg-yellow-500 rounded-full animate-pulse"></span>
+                    <span class="text-[10px] font-black uppercase tracking-widest text-gray-400">Java Source Output</span>
+                </div>
+                <div class="flex gap-3">
+                    <button onclick="copyToClipboard()" class="bg-white text-black px-5 py-2 rounded-xl text-[10px] font-black uppercase hover:bg-gray-200 transition">Copy All</button>
+                    <button onclick="closeModal()" class="bg-red-600 text-white px-5 py-2 rounded-xl text-[10px] font-black uppercase hover:bg-red-700 transition">Close</button>
+                </div>
+            </div>
+            <div id="code-display" class="code-display custom-scroll"></div>
+        </div>
+    </div>
+
+    <script>
+        let state = {
+            isSolid: false,
+            isBatch: false,
+            colors: ['#2193B0', '#6DD5ED', '#009688'],
+            solidColor: '#2193B0',
+            strokeColor: '#008DCD',
+            rippleColor: '#E0E0E0',
+            radius: 25,
+            individualCorners: {
+                enabled: false,
+                tl: 25, tr: 25, bl: 25, br: 25
+            },
+            strokeWidth: 2,
+            elevation: 5,
+            viewId: 'user_id_input_here',
+            hasAttr: true,
+            hasBinding: true,
+            hasRipple: true,
+            orientation: 'TOP_BOTTOM'
+        };
+
+        function toggleBatchMode() {
+            state.isBatch = document.getElementById('toggle-batch').checked;
+            const label = document.getElementById('id-label');
+            const input = document.getElementById('view-id');
+            if(state.isBatch) {
+                label.innerText = "Comma Separated View IDs";
+                label.classList.add('text-yellow-500');
+                input.placeholder = "e.g. view1, view2, view3";
+            } else {
+                label.innerText = "Target View ID";
+                label.classList.remove('text-yellow-500');
+                input.placeholder = "";
+            }
+        }
+
+        function toggleCornerCard() {
+            const card = document.getElementById('corner-card');
+            const isChecked = document.getElementById('toggle-corner-card').checked;
+            card.classList.toggle('hidden', !isChecked);
+        }
+
+        function toggleTemplatesCard() {
+            const card = document.getElementById('templates-card');
+            const isChecked = document.getElementById('toggle-templates-card').checked;
+            card.classList.toggle('hidden', !isChecked);
+        }
+
+        function applyTemplate(type) {
+            if(type === 'neon') {
+                state.isSolid = false;
+                state.colors = ['#ec4899', '#8b5cf6'];
+                state.strokeColor = '#f472b6';
+                state.rippleColor = '#fbcfe8';
+                state.radius = 20;
+                state.elevation = 15;
+                state.orientation = 'TL_BR';
+            } else if(type === 'clay') {
+                state.isSolid = true;
+                state.solidColor = '#E0E0E0';
+                state.strokeColor = '#FFFFFF';
+                state.rippleColor = '#BDBDBD';
+                state.radius = 35;
+                state.elevation = 8;
+                state.strokeWidth = 3;
+            } else if(type === 'gold') {
+                state.isSolid = false;
+                state.colors = ['#FBBF24', '#B45309'];
+                state.strokeColor = '#FDE68A';
+                state.rippleColor = '#FEF3C7';
+                state.radius = 12;
+                state.elevation = 12;
+                state.orientation = 'TOP_BOTTOM';
+            }
+            
+            // Sync UI inputs with state
+            document.getElementById('radius').value = state.radius;
+            document.getElementById('stroke-w').value = state.strokeWidth;
+            document.getElementById('elevation').value = state.elevation;
+            document.getElementById('stroke-color').value = state.strokeColor;
+            document.getElementById('ripple-color').value = state.rippleColor;
+            document.getElementById('gradient-direction').value = state.orientation;
+            
+            setMode(state.isSolid ? 'solid' : 'gradient');
+            renderColors();
+            updateUI();
+        }
+
+        function setMode(m) {
+            state.isSolid = (m === 'solid');
+            document.getElementById('btn-gradient').className = `text-[8px] px-2 py-0.5 rounded border border-white/10 ${!state.isSolid ? 'bg-white text-black' : ''} font-bold uppercase`;
+            document.getElementById('btn-solid').className = `text-[8px] px-2 py-0.5 rounded border border-white/10 ${state.isSolid ? 'bg-white text-black' : ''} font-bold uppercase`;
+            document.getElementById('add-color-btn').style.display = state.isSolid ? 'none' : 'block';
+            document.getElementById('gradient-controls').style.display = state.isSolid ? 'none' : 'block';
+            renderColors();
+            updateUI();
+        }
+
+        function addColor() {
+            state.colors.push('#FFFFFF');
+            renderColors();
+            updateUI();
+        }
+
+        function removeColor(i) {
+            if (state.colors.length > 2) {
+                state.colors.splice(i, 1);
+                renderColors();
+                updateUI();
+            }
+        }
+
+        function renderColors() {
+            const list = document.getElementById('color-list');
+            list.innerHTML = '';
+            if(state.isSolid) {
+                const item = document.createElement('div');
+                item.className = 'flex items-center gap-3 bg-black/50 p-3 rounded-xl border border-gray-900';
+                item.innerHTML = `<div class="picker-wrapper"><input type="color" value="${state.solidColor}" oninput="state.solidColor=this.value; updateUI()"></div><input type="text" value="${state.solidColor.toUpperCase()}" oninput="state.solidColor=this.value; updateUI()" class="bg-transparent font-mono text-xs outline-none flex-grow">`;
+                list.appendChild(item);
+            } else {
+                state.colors.forEach((c, i) => {
+                    const item = document.createElement('div');
+                    item.className = 'flex items-center gap-3 bg-black/50 p-2 rounded-xl border border-gray-900 group';
+                    item.innerHTML = `<div class="picker-wrapper"><input type="color" value="${c}" oninput="state.colors[${i}]=this.value; updateUI()"></div><input type="text" value="${c.toUpperCase()}" oninput="state.colors[${i}]=this.value; updateUI()" class="bg-transparent font-mono text-[10px] outline-none flex-grow"><button onclick="removeColor(${i})" class="opacity-0 group-hover:opacity-100 text-gray-500 hover:text-white transition">&times;</button>`;
+                    list.appendChild(item);
+                });
+            }
+        }
+
+        function getCSSGradientDirection(orient) {
+            switch(orient) {
+                case 'TOP_BOTTOM': return 'to bottom';
+                case 'BOTTOM_TOP': return 'to top';
+                case 'LEFT_RIGHT': return 'to right';
+                case 'RIGHT_LEFT': return 'to left';
+                case 'TL_BR': return 'to bottom right';
+                case 'TR_BL': return 'to bottom left';
+                case 'BL_TR': return 'to top right';
+                case 'BR_TL': return 'to top left';
+                default: return 'to bottom';
+            }
+        }
+
+        function updateUI() {
+            state.viewId = document.getElementById('view-id').value || 'view';
+            state.radius = document.getElementById('radius').value;
+            state.strokeWidth = document.getElementById('stroke-w').value;
+            state.strokeColor = document.getElementById('stroke-color').value;
+            state.elevation = document.getElementById('elevation').value;
+            state.rippleColor = document.getElementById('ripple-color').value;
+            state.hasAttr = document.getElementById('toggle-attr').checked;
+            state.hasBinding = document.getElementById('toggle-binding').checked;
+            state.hasRipple = document.getElementById('toggle-ripple').checked;
+            state.orientation = document.getElementById('gradient-direction').value;
+            
+            // Advanced Corner Data
+            state.individualCorners.enabled = document.getElementById('use-individual-corners').checked;
+            state.individualCorners.tl = document.getElementById('corner-tl').value;
+            state.individualCorners.tr = document.getElementById('corner-tr').value;
+            state.individualCorners.bl = document.getElementById('corner-bl').value;
+            state.individualCorners.br = document.getElementById('corner-br').value;
+
+            document.getElementById('rad-val').innerText = state.radius;
+            document.getElementById('tl-val').innerText = state.individualCorners.tl;
+            document.getElementById('tr-val').innerText = state.individualCorners.tr;
+            document.getElementById('bl-val').innerText = state.individualCorners.bl;
+            document.getElementById('br-val').innerText = state.individualCorners.br;
+            
+            document.getElementById('str-val').innerText = state.strokeWidth;
+            document.getElementById('elev-val').innerText = state.elevation;
+            document.getElementById('stroke-color-hex').value = state.strokeColor.toUpperCase();
+            document.getElementById('ripple-color-hex').value = state.rippleColor.toUpperCase();
+
+            const preview = document.getElementById('zui-live-view');
+            preview.style.background = state.isSolid ? state.solidColor : `linear-gradient(${getCSSGradientDirection(state.orientation)}, ${state.colors.join(',')})`;
+            
+            if(state.individualCorners.enabled) {
+                preview.style.borderRadius = `${state.individualCorners.tl}px ${state.individualCorners.tr}px ${state.individualCorners.br}px ${state.individualCorners.bl}px`;
+            } else {
+                preview.style.borderRadius = `${state.radius}px`;
+            }
+
+            preview.style.border = `${state.strokeWidth}px solid ${state.strokeColor}`;
+            preview.style.boxShadow = `0 ${state.elevation}px ${state.elevation*2}px rgba(0,0,0,0.5)`;
+        }
+
+        function generateSingleCode(viewId) {
+            let clrs;
+            if(state.isSolid) {
+                const hex = `0xFF${state.solidColor.replace('#','').toUpperCase()}`;
+                clrs = `${hex}, ${hex}`;
+            } else {
+                clrs = state.colors.map(c => `0xFF${c.replace('#','').toUpperCase()}`).join(', ');
+            }
+            
+            const strokeHex = `0xFF${state.strokeColor.replace('#','').toUpperCase()}`;
+            const ripHex = `0xFF${state.rippleColor.replace('#','').toUpperCase()}`;
+            const target = state.hasBinding ? `binding.${viewId.trim()}` : `findViewById(R.id.${viewId.trim()})`;
+            
+            let block = "";
+            if(state.hasAttr) block += `//Made By ZUi ( A Project By Zelvior )\n`;
+            block += `{\n`;
+            block += `android.graphics.drawable.GradientDrawable ZUi = new android.graphics.drawable.GradientDrawable();\n\n`;
+            block += `int d = (int) getApplicationContext().getResources().getDisplayMetrics().density;\n\n`;
+            block += `int clrs [] = {${clrs}};\n\n`;
+            block += `ZUi= new android.graphics.drawable.GradientDrawable(android.graphics.drawable.GradientDrawable.Orientation.${state.orientation}, clrs);\n\n`;
+            
+            if(state.individualCorners.enabled) {
+                const {tl, tr, bl, br} = state.individualCorners;
+                block += `float[] radii = {d*${tl}, d*${tl}, d*${tr}, d*${tr}, d*${br}, d*${br}, d*${bl}, d*${bl}};\n`;
+                block += `ZUi.setCornerRadii(radii);\n\n`;
+            } else {
+                block += `ZUi.setCornerRadius(d*${state.radius});\n\n`;
+            }
+            
+            block += `ZUi.setStroke(d*${state.strokeWidth}, ${strokeHex});\n\n`;
+            block += `${target}.setElevation(d*${state.elevation});\n\n`;
+            
+            if(state.hasRipple) {
+                block += `android.graphics.drawable.RippleDrawable ZUi_RD = new android.graphics.drawable.RippleDrawable(new android.content.res.ColorStateList(new int[][]{new int[]{}}, new int[]{${ripHex}}), ZUi, null);\n\n`;
+                block += `${target}.setBackground(ZUi_RD);\n`;
+            } else {
+                block += `${target}.setBackground(ZUi);\n`;
+            }
+            block += `${target}.setClickable(true);\n`;
+            block += `}`;
+            return block;
+        }
+
+        function highlightCode(code) {
+            return code
+                .replace(/\/\/.*$/gm, '<span class="token-comment">$&</span>')
+                .replace(/\b(new|int|float|boolean|null|true|false)\b/g, '<span class="token-keyword">$1</span>')
+                .replace(/\b([A-Z][a-zA-Z0-9_]+)\b/g, '<span class="token-class">$1</span>')
+                .replace(/0x[A-F0-9]+/g, '<span class="token-number">$&</span>')
+                .replace(/\.([a-zA-Z0-9_]+)\b/g, '.<span class="token-method">$1</span>');
+        }
+
+        function showCode() {
+            let finalOutput = "";
+            if(state.isBatch) {
+                const ids = state.viewId.split(',');
+                ids.forEach((id, idx) => {
+                    if(id.trim() !== "") {
+                        finalOutput += generateSingleCode(id) + (idx < ids.length - 1 ? "\n\n" : "");
+                    }
+                });
+            } else {
+                finalOutput = generateSingleCode(state.viewId);
+            }
+            
+            document.getElementById('code-display').innerHTML = highlightCode(finalOutput);
+            document.getElementById('code-modal').style.display = 'flex';
+        }
+
+        function closeModal() { document.getElementById('code-modal').style.display = 'none'; }
+
+        function copyToClipboard() {
+            const range = document.createRange();
+            range.selectNode(document.getElementById('code-display'));
+            const sel = window.getSelection();
+            sel.removeAllRanges();
+            sel.addRange(range);
+            document.execCommand('copy');
+            sel.removeAllRanges();
+            const btn = event.target;
+            btn.innerText = "COPIED!";
+            setTimeout(() => btn.innerText = "Copy All", 2000);
+        }
+
+        // Ripple Preview
+        document.getElementById('zui-live-view').addEventListener('mousedown', function(e) {
+            if(!state.hasRipple) return;
+            const r = document.createElement('span');
+            r.className = 'ripple-layer';
+            r.style.backgroundColor = state.rippleColor + '4D';
+            this.appendChild(r);
+            const rect = this.getBoundingClientRect();
+            const size = Math.max(rect.width, rect.height);
+            r.style.width = r.style.height = size + 'px';
+            r.style.left = (e.clientX - rect.left - size/2) + 'px';
+            r.style.top = (e.clientY - rect.top - size/2) + 'px';
+            setTimeout(() => r.remove(), 500);
+        });
+
+        renderColors();
+        updateUI();
+    </script>
+</body>
+</html>
