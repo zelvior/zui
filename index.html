@@ -85,15 +85,8 @@
             line-height: 1.7;
             overflow: auto;
             flex-grow: 1;
+            white-space: pre-wrap;
         }
-
-        /* Syntax Highlighting */
-        .token-keyword { color: #569cd6; }
-        .token-class { color: #4ec9b0; }
-        .token-method { color: #dcdcaa; }
-        .token-string { color: #ce9178; }
-        .token-number { color: #b5cea8; }
-        .token-comment { color: #6a9955; }
 
         .ripple-layer {
             position: absolute;
@@ -327,32 +320,41 @@
                 <!-- Template Architect Card -->
                 <div id="templates-card" class="glass-panel p-6 space-y-4 hidden border-purple-900/30">
                     <h2 class="text-[10px] font-black uppercase opacity-40 tracking-widest mb-2">Design Templates</h2>
-                    <div class="grid grid-cols-1 gap-3">
+                    <div class="grid grid-cols-2 gap-3">
                         <button onclick="applyTemplate('neon')" class="template-btn group">
-                            <div class="flex items-center gap-3">
-                                <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-pink-500 to-purple-600 border border-pink-400"></div>
-                                <div>
-                                    <p class="text-[10px] font-bold uppercase text-white">Neon Cyber</p>
-                                    <p class="text-[8px] opacity-40 uppercase">Glow & Pink Accents</p>
-                                </div>
+                            <div class="flex items-center gap-2">
+                                <div class="w-6 h-6 rounded bg-gradient-to-br from-pink-500 to-purple-600 border border-pink-400"></div>
+                                <span class="text-[9px] font-bold uppercase">Neon Cyber</span>
                             </div>
                         </button>
                         <button onclick="applyTemplate('clay')" class="template-btn group">
-                            <div class="flex items-center gap-3">
-                                <div class="w-8 h-8 rounded-lg bg-[#E0E0E0] border-2 border-white shadow-inner"></div>
-                                <div>
-                                    <p class="text-[10px] font-bold uppercase text-white">Soft Clay</p>
-                                    <p class="text-[8px] opacity-40 uppercase">Neumorphic & Minimal</p>
-                                </div>
+                            <div class="flex items-center gap-2">
+                                <div class="w-6 h-6 rounded bg-[#E0E0E0] border border-white shadow-inner"></div>
+                                <span class="text-[9px] font-bold uppercase">Soft Clay</span>
                             </div>
                         </button>
                         <button onclick="applyTemplate('gold')" class="template-btn group">
-                            <div class="flex items-center gap-3">
-                                <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-yellow-400 to-yellow-800 border border-yellow-300"></div>
-                                <div>
-                                    <p class="text-[10px] font-bold uppercase text-white">Royal Gold</p>
-                                    <p class="text-[8px] opacity-40 uppercase">Premium Gradient</p>
-                                </div>
+                            <div class="flex items-center gap-2">
+                                <div class="w-6 h-6 rounded bg-gradient-to-br from-yellow-400 to-yellow-800"></div>
+                                <span class="text-[9px] font-bold uppercase">Royal Gold</span>
+                            </div>
+                        </button>
+                        <button onclick="applyTemplate('midnight')" class="template-btn group">
+                            <div class="flex items-center gap-2">
+                                <div class="w-6 h-6 rounded bg-black border border-white/20"></div>
+                                <span class="text-[9px] font-bold uppercase">Midnight OLED</span>
+                            </div>
+                        </button>
+                        <button onclick="applyTemplate('frosted')" class="template-btn group">
+                            <div class="flex items-center gap-2">
+                                <div class="w-6 h-6 rounded bg-white/20 backdrop-blur-md border border-white/30"></div>
+                                <span class="text-[9px] font-bold uppercase">Frosted Glass</span>
+                            </div>
+                        </button>
+                        <button onclick="applyTemplate('toxic')" class="template-btn group">
+                            <div class="flex items-center gap-2">
+                                <div class="w-6 h-6 rounded bg-gradient-to-tr from-green-600 to-lime-400"></div>
+                                <span class="text-[9px] font-bold uppercase">Toxic Venom</span>
                             </div>
                         </button>
                     </div>
@@ -447,9 +449,16 @@
                     </div>
                 </div>
                 
-                <button onclick="showCode()" class="w-full bg-white text-black py-6 rounded-2xl font-black text-xs uppercase tracking-[0.3em] hover:scale-[1.02] active:scale-[0.98] transition-all shadow-[0_20px_50px_rgba(255,255,255,0.1)]">
-                    Generate Code
-                </button>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                    <button onclick="showCode('java')" class="bg-blue-600 text-white p-4 rounded-xl font-black text-[9px] uppercase tracking-widest hover:bg-blue-500 transition">Android Java</button>
+                    <button onclick="showCode('compose')" class="bg-green-600 text-white p-4 rounded-xl font-black text-[9px] uppercase tracking-widest hover:bg-green-500 transition">Jetpack Compose</button>
+                    <button onclick="showCode('xml')" class="bg-orange-600 text-white p-4 rounded-xl font-black text-[9px] uppercase tracking-widest hover:bg-orange-500 transition">Android XML</button>
+                    <button onclick="showCode('flutter')" class="bg-sky-500 text-white p-4 rounded-xl font-black text-[9px] uppercase tracking-widest hover:bg-sky-400 transition">Flutter</button>
+                    <button onclick="showCode('tailwind')" class="bg-cyan-500 text-white p-4 rounded-xl font-black text-[9px] uppercase tracking-widest hover:bg-cyan-400 transition">Tailwind</button>
+                    <button onclick="showCode('swiftui')" class="bg-indigo-600 text-white p-4 rounded-xl font-black text-[9px] uppercase tracking-widest hover:bg-indigo-500 transition">SwiftUI</button>
+                    <button onclick="showCode('css')" class="bg-pink-600 text-white p-4 rounded-xl font-black text-[9px] uppercase tracking-widest hover:bg-pink-500 transition">CSS/SCSS</button>
+                    <button onclick="showCode('json')" class="bg-gray-700 text-white p-4 rounded-xl font-black text-[9px] uppercase tracking-widest hover:bg-gray-600 transition">Theme JSON</button>
+                </div>
             </div>
         </main>
 
@@ -476,7 +485,7 @@
             <div class="flex justify-between items-center p-5 border-b border-white/5 bg-[#111]">
                 <div class="flex items-center gap-3">
                     <span class="w-2 h-2 bg-yellow-500 rounded-full animate-pulse"></span>
-                    <span class="text-[10px] font-black uppercase tracking-widest text-gray-400">Java Source Output</span>
+                    <span id="output-title" class="text-[10px] font-black uppercase tracking-widest text-gray-400">Source Output</span>
                 </div>
                 <div class="flex gap-3">
                     <button onclick="copyToClipboard()" class="bg-white text-black px-5 py-2 rounded-xl text-[10px] font-black uppercase hover:bg-gray-200 transition">Copy All</button>
@@ -538,42 +547,44 @@
 
         function applyTemplate(type) {
             if(type === 'neon') {
-                state.isSolid = false;
-                state.colors = ['#ec4899', '#8b5cf6'];
-                state.strokeColor = '#f472b6';
-                state.rippleColor = '#fbcfe8';
-                state.radius = 20;
-                state.elevation = 15;
-                state.orientation = 'TL_BR';
+                state.isSolid = false; state.colors = ['#ec4899', '#8b5cf6'];
+                state.strokeColor = '#f472b6'; state.rippleColor = '#fbcfe8';
+                state.radius = 20; state.elevation = 15; state.orientation = 'TL_BR';
             } else if(type === 'clay') {
-                state.isSolid = true;
-                state.solidColor = '#E0E0E0';
-                state.strokeColor = '#FFFFFF';
-                state.rippleColor = '#BDBDBD';
-                state.radius = 35;
-                state.elevation = 8;
-                state.strokeWidth = 3;
+                state.isSolid = true; state.solidColor = '#E0E0E0';
+                state.strokeColor = '#FFFFFF'; state.rippleColor = '#BDBDBD';
+                state.radius = 35; state.elevation = 8; state.strokeWidth = 3;
             } else if(type === 'gold') {
-                state.isSolid = false;
-                state.colors = ['#FBBF24', '#B45309'];
-                state.strokeColor = '#FDE68A';
-                state.rippleColor = '#FEF3C7';
-                state.radius = 12;
-                state.elevation = 12;
-                state.orientation = 'TOP_BOTTOM';
+                state.isSolid = false; state.colors = ['#FBBF24', '#B45309'];
+                state.strokeColor = '#FDE68A'; state.rippleColor = '#FEF3C7';
+                state.radius = 12; state.elevation = 12; state.orientation = 'TOP_BOTTOM';
+            } else if(type === 'midnight') {
+                state.isSolid = true; state.solidColor = '#000000';
+                state.strokeColor = '#333333'; state.rippleColor = '#444444';
+                state.radius = 16; state.elevation = 0; state.strokeWidth = 1;
+            } else if(type === 'frosted') {
+                state.isSolid = true; state.solidColor = '#ffffff33';
+                state.strokeColor = '#ffffff4d'; state.rippleColor = '#ffffff66';
+                state.radius = 24; state.elevation = 10; state.strokeWidth = 1;
+            } else if(type === 'toxic') {
+                state.isSolid = false; state.colors = ['#059669', '#a3e635'];
+                state.strokeColor = '#10b981'; state.rippleColor = '#6ee7b7';
+                state.radius = 50; state.elevation = 20; state.orientation = 'BL_TR';
             }
             
-            // Sync UI inputs with state
+            syncInputsToState();
+            setMode(state.isSolid ? 'solid' : 'gradient');
+            renderColors();
+            updateUI();
+        }
+
+        function syncInputsToState() {
             document.getElementById('radius').value = state.radius;
             document.getElementById('stroke-w').value = state.strokeWidth;
             document.getElementById('elevation').value = state.elevation;
             document.getElementById('stroke-color').value = state.strokeColor;
             document.getElementById('ripple-color').value = state.rippleColor;
             document.getElementById('gradient-direction').value = state.orientation;
-            
-            setMode(state.isSolid ? 'solid' : 'gradient');
-            renderColors();
-            updateUI();
         }
 
         function setMode(m) {
@@ -586,19 +597,8 @@
             updateUI();
         }
 
-        function addColor() {
-            state.colors.push('#FFFFFF');
-            renderColors();
-            updateUI();
-        }
-
-        function removeColor(i) {
-            if (state.colors.length > 2) {
-                state.colors.splice(i, 1);
-                renderColors();
-                updateUI();
-            }
-        }
+        function addColor() { state.colors.push('#FFFFFF'); renderColors(); updateUI(); }
+        function removeColor(i) { if (state.colors.length > 2) { state.colors.splice(i, 1); renderColors(); updateUI(); } }
 
         function renderColors() {
             const list = document.getElementById('color-list');
@@ -619,17 +619,11 @@
         }
 
         function getCSSGradientDirection(orient) {
-            switch(orient) {
-                case 'TOP_BOTTOM': return 'to bottom';
-                case 'BOTTOM_TOP': return 'to top';
-                case 'LEFT_RIGHT': return 'to right';
-                case 'RIGHT_LEFT': return 'to left';
-                case 'TL_BR': return 'to bottom right';
-                case 'TR_BL': return 'to bottom left';
-                case 'BL_TR': return 'to top right';
-                case 'BR_TL': return 'to top left';
-                default: return 'to bottom';
-            }
+            const map = {
+                'TOP_BOTTOM': 'to bottom', 'BOTTOM_TOP': 'to top', 'LEFT_RIGHT': 'to right', 'RIGHT_LEFT': 'to left',
+                'TL_BR': 'to bottom right', 'TR_BL': 'to bottom left', 'BL_TR': 'to top right', 'BR_TL': 'to top left'
+            };
+            return map[orient] || 'to bottom';
         }
 
         function updateUI() {
@@ -643,8 +637,6 @@
             state.hasBinding = document.getElementById('toggle-binding').checked;
             state.hasRipple = document.getElementById('toggle-ripple').checked;
             state.orientation = document.getElementById('gradient-direction').value;
-            
-            // Advanced Corner Data
             state.individualCorners.enabled = document.getElementById('use-individual-corners').checked;
             state.individualCorners.tl = document.getElementById('corner-tl').value;
             state.individualCorners.tr = document.getElementById('corner-tr').value;
@@ -656,7 +648,6 @@
             document.getElementById('tr-val').innerText = state.individualCorners.tr;
             document.getElementById('bl-val').innerText = state.individualCorners.bl;
             document.getElementById('br-val').innerText = state.individualCorners.br;
-            
             document.getElementById('str-val').innerText = state.strokeWidth;
             document.getElementById('elev-val').innerText = state.elevation;
             document.getElementById('stroke-color-hex').value = state.strokeColor.toUpperCase();
@@ -675,85 +666,126 @@
             preview.style.boxShadow = `0 ${state.elevation}px ${state.elevation*2}px rgba(0,0,0,0.5)`;
         }
 
-        function generateSingleCode(viewId) {
-            let clrs;
-            if(state.isSolid) {
-                const hex = `0xFF${state.solidColor.replace('#','').toUpperCase()}`;
-                clrs = `${hex}, ${hex}`;
-            } else {
-                clrs = state.colors.map(c => `0xFF${c.replace('#','').toUpperCase()}`).join(', ');
-            }
-            
+        function showCode(mode) {
+            let finalOutput = "";
+            let title = "Source Output";
+            const ids = state.isBatch ? state.viewId.split(',') : [state.viewId];
+
+            ids.forEach((id, idx) => {
+                const cleanId = id.trim();
+                if(cleanId === "") return;
+                
+                switch(mode) {
+                    case 'java': finalOutput += generateJava(cleanId); title = "Java Source"; break;
+                    case 'compose': finalOutput += generateCompose(cleanId); title = "Jetpack Compose (Kotlin)"; break;
+                    case 'xml': finalOutput += generateXML(cleanId); title = "Android Drawable XML"; break;
+                    case 'flutter': finalOutput += generateFlutter(cleanId); title = "Flutter / Dart"; break;
+                    case 'tailwind': finalOutput += generateTailwind(cleanId); title = "Tailwind CSS"; break;
+                    case 'swiftui': finalOutput += generateSwiftUI(cleanId); title = "SwiftUI"; break;
+                    case 'css': finalOutput += generateCSS(cleanId); title = "CSS / SCSS"; break;
+                    case 'json': finalOutput += generateJSON(cleanId); title = "Theme Config JSON"; break;
+                }
+                if(idx < ids.length - 1) finalOutput += "\n\n";
+            });
+
+            document.getElementById('output-title').innerText = title;
+            document.getElementById('code-display').innerText = finalOutput;
+            document.getElementById('code-modal').style.display = 'flex';
+        }
+
+        // --- Export Generators ---
+
+        function generateJava(viewId) {
+            let clrs = state.isSolid ? `0xFF${state.solidColor.replace('#','').toUpperCase()}, 0xFF${state.solidColor.replace('#','').toUpperCase()}` : state.colors.map(c => `0xFF${c.replace('#','').toUpperCase()}`).join(', ');
             const strokeHex = `0xFF${state.strokeColor.replace('#','').toUpperCase()}`;
             const ripHex = `0xFF${state.rippleColor.replace('#','').toUpperCase()}`;
-            const target = state.hasBinding ? `binding.${viewId.trim()}` : `findViewById(R.id.${viewId.trim()})`;
+            const target = state.hasBinding ? `binding.${viewId}` : `findViewById(R.id.${viewId})`;
             
-            let block = "";
-            if(state.hasAttr) block += `//Made By ZUi ( A Project By Zelvior )\n`;
-            block += `{\n`;
-            block += `android.graphics.drawable.GradientDrawable ZUi = new android.graphics.drawable.GradientDrawable();\n\n`;
-            block += `int d = (int) getApplicationContext().getResources().getDisplayMetrics().density;\n\n`;
-            block += `int clrs [] = {${clrs}};\n\n`;
-            block += `ZUi= new android.graphics.drawable.GradientDrawable(android.graphics.drawable.GradientDrawable.Orientation.${state.orientation}, clrs);\n\n`;
-            
+            let b = state.hasAttr ? "//Made By ZUi ( A Project By Zelvior )\n" : "";
+            b += `{\n  android.graphics.drawable.GradientDrawable ZUi = new android.graphics.drawable.GradientDrawable();\n`;
+            b += `  int d = (int) getApplicationContext().getResources().getDisplayMetrics().density;\n`;
+            b += `  int clrs [] = {${clrs}};\n`;
+            b += `  ZUi = new android.graphics.drawable.GradientDrawable(android.graphics.drawable.GradientDrawable.Orientation.${state.orientation}, clrs);\n`;
             if(state.individualCorners.enabled) {
-                const {tl, tr, bl, br} = state.individualCorners;
-                block += `float[] radii = {d*${tl}, d*${tl}, d*${tr}, d*${tr}, d*${br}, d*${br}, d*${bl}, d*${bl}};\n`;
-                block += `ZUi.setCornerRadii(radii);\n\n`;
-            } else {
-                block += `ZUi.setCornerRadius(d*${state.radius});\n\n`;
-            }
-            
-            block += `ZUi.setStroke(d*${state.strokeWidth}, ${strokeHex});\n\n`;
-            block += `${target}.setElevation(d*${state.elevation});\n\n`;
-            
+                const {tl,tr,bl,br} = state.individualCorners;
+                b += `  float[] radii = {d*${tl}, d*${tl}, d*${tr}, d*${tr}, d*${br}, d*${br}, d*${bl}, d*${bl}};\n  ZUi.setCornerRadii(radii);\n`;
+            } else { b += `  ZUi.setCornerRadius(d*${state.radius});\n`; }
+            b += `  ZUi.setStroke(d*${state.strokeWidth}, ${strokeHex});\n  ${target}.setElevation(d*${state.elevation});\n`;
             if(state.hasRipple) {
-                block += `android.graphics.drawable.RippleDrawable ZUi_RD = new android.graphics.drawable.RippleDrawable(new android.content.res.ColorStateList(new int[][]{new int[]{}}, new int[]{${ripHex}}), ZUi, null);\n\n`;
-                block += `${target}.setBackground(ZUi_RD);\n`;
-            } else {
-                block += `${target}.setBackground(ZUi);\n`;
-            }
-            block += `${target}.setClickable(true);\n`;
-            block += `}`;
-            return block;
+                b += `  android.graphics.drawable.RippleDrawable ZUi_RD = new android.graphics.drawable.RippleDrawable(new android.content.res.ColorStateList(new int[][]{new int[]{}}, new int[]{${ripHex}}), ZUi, null);\n  ${target}.setBackground(ZUi_RD);\n`;
+            } else { b += `  ${target}.setBackground(ZUi);\n`; }
+            b += `  ${target}.setClickable(true);\n}`;
+            return b;
         }
 
-        function highlightCode(code) {
-            return code
-                .replace(/\/\/.*$/gm, '<span class="token-comment">$&</span>')
-                .replace(/\b(new|int|float|boolean|null|true|false)\b/g, '<span class="token-keyword">$1</span>')
-                .replace(/\b([A-Z][a-zA-Z0-9_]+)\b/g, '<span class="token-class">$1</span>')
-                .replace(/0x[A-F0-9]+/g, '<span class="token-number">$&</span>')
-                .replace(/\.([a-zA-Z0-9_]+)\b/g, '.<span class="token-method">$1</span>');
-        }
-
-        function showCode() {
-            let finalOutput = "";
-            if(state.isBatch) {
-                const ids = state.viewId.split(',');
-                ids.forEach((id, idx) => {
-                    if(id.trim() !== "") {
-                        finalOutput += generateSingleCode(id) + (idx < ids.length - 1 ? "\n\n" : "");
-                    }
-                });
-            } else {
-                finalOutput = generateSingleCode(state.viewId);
-            }
+        function generateCompose(viewId) {
+            const clrs = state.isSolid ? `listOf(Color(0xFF${state.solidColor.replace('#','')}))` : `listOf(${state.colors.map(c => `Color(0xFF${c.replace('#','')})`).join(', ')})`;
+            const strokeColor = `Color(0xFF${state.strokeColor.replace('#','')})`;
+            const shape = state.individualCorners.enabled ? 
+                `RoundedCornerShape(topStart = ${state.individualCorners.tl}.dp, topEnd = ${state.individualCorners.tr}.dp, bottomEnd = ${state.individualCorners.br}.dp, bottomStart = ${state.individualCorners.bl}.dp)` : 
+                `RoundedCornerShape(${state.radius}.dp)`;
             
-            document.getElementById('code-display').innerHTML = highlightCode(finalOutput);
-            document.getElementById('code-modal').style.display = 'flex';
+            return `Box(\n  modifier = Modifier\n    .size(width = 280.dp, height = 100.dp)\n    .shadow(elevation = ${state.elevation}.dp, shape = ${shape})\n    .background(\n      brush = Brush.linearGradient(colors = ${clrs}),\n      shape = ${shape}\n    )\n    .border(width = ${state.strokeWidth}.dp, color = ${strokeColor}, shape = ${shape})\n    .clickable { /* Handle Click */ }\n) { /* Content */ }`;
+        }
+
+        function generateXML(viewId) {
+            let s = `<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">\n`;
+            if(!state.isSolid) {
+                s += `  <gradient android:startColor="${state.colors[0]}" android:endColor="${state.colors[state.colors.length-1]}" android:type="linear" />\n`;
+            } else { s += `  <solid android:color="${state.solidColor}" />\n`; }
+            if(state.individualCorners.enabled) {
+                s += `  <corners android:topLeftRadius="${state.individualCorners.tl}dp" android:topRightRadius="${state.individualCorners.tr}dp" android:bottomLeftRadius="${state.individualCorners.bl}dp" android:bottomRightRadius="${state.individualCorners.br}dp" />\n`;
+            } else { s += `  <corners android:radius="${state.radius}dp" />\n`; }
+            s += `  <stroke android:width="${state.strokeWidth}dp" android:color="${state.strokeColor}" />\n</shape>`;
+            return s;
+        }
+
+        function generateFlutter(viewId) {
+            const clrs = state.isSolid ? `[Color(0xFF${state.solidColor.replace('#','')}), Color(0xFF${state.solidColor.replace('#','')})]` : `[${state.colors.map(c => `Color(0xFF${c.replace('#','')})`).join(', ')}]`;
+            const radius = state.individualCorners.enabled ? 
+                `BorderRadius.only(topLeft: Radius.circular(${state.individualCorners.tl}), topRight: Radius.circular(${state.individualCorners.tr}), bottomLeft: Radius.circular(${state.individualCorners.bl}), bottomRight: Radius.circular(${state.individualCorners.br}))` :
+                `BorderRadius.circular(${state.radius})`;
+            
+            return `Container(\n  width: 280, height: 100,\n  decoration: BoxDecoration(\n    gradient: LinearGradient(colors: ${clrs}),\n    borderRadius: ${radius},\n    border: Border.all(color: Color(0xFF${state.strokeColor.replace('#','')}), width: ${state.strokeWidth}),\n    boxShadow: [BoxShadow(color: Colors.black54, blurRadius: ${state.elevation}, offset: Offset(0, ${state.elevation/2}))],\n  ),\n  child: Material(\n    color: Colors.transparent,\n    child: InkWell(onTap: () {}, borderRadius: ${radius}, splashColor: Color(0x4D${state.rippleColor.replace('#','')})),\n  ),\n)`;
+        }
+
+        function generateTailwind(viewId) {
+            const radius = state.individualCorners.enabled ? `rounded-[${state.individualCorners.tl}px_${state.individualCorners.tr}px_${state.individualCorners.br}px_${state.individualCorners.bl}px]` : `rounded-[${state.radius}px]`;
+            const grad = state.isSolid ? `bg-[${state.solidColor}]` : `bg-gradient-to-b from-[${state.colors[0]}] to-[${state.colors[state.colors.length-1]}]`;
+            return `<div class="w-[280px] h-[100px] ${radius} ${grad} border-[${state.strokeWidth}px] border-[${state.strokeColor}] shadow-[0_${state.elevation}px_${state.elevation*2}px_rgba(0,0,0,0.5)] cursor-pointer active:opacity-80 transition-all">\n  <!-- Content -->\n</div>`;
+        }
+
+        function generateSwiftUI(viewId) {
+            const clrs = state.isSolid ? `[Color(hex: "${state.solidColor}")]` : `[${state.colors.map(c => `Color(hex: "${c}")`).join(', ')}]`;
+            return `RoundedRectangle(cornerRadius: ${state.radius})\n  .fill(LinearGradient(gradient: Gradient(colors: ${clrs}), startPoint: .top, endPoint: .bottom))\n  .overlay(RoundedRectangle(cornerRadius: ${state.radius}).stroke(Color(hex: "${state.strokeColor}"), lineWidth: ${state.strokeWidth}))\n  .shadow(radius: ${state.elevation})\n  .frame(width: 280, height: 100)`;
+        }
+
+        function generateCSS(viewId) {
+            const radius = state.individualCorners.enabled ? `${state.individualCorners.tl}px ${state.individualCorners.tr}px ${state.individualCorners.br}px ${state.individualCorners.bl}px` : `${state.radius}px`;
+            const background = state.isSolid ? state.solidColor : `linear-gradient(${getCSSGradientDirection(state.orientation)}, ${state.colors.join(', ')})`;
+            return `.${viewId} {\n  width: 280px;\n  height: 100px;\n  background: ${background};\n  border: ${state.strokeWidth}px solid ${state.strokeColor};\n  border-radius: ${radius};\n  box-shadow: 0 ${state.elevation}px ${state.elevation*2}px rgba(0,0,0,0.5);\n  cursor: pointer;\n  transition: 0.2s;\n}\n\n.${viewId}:active {\n  background-color: ${state.rippleColor};\n}`;
+        }
+
+        function generateJSON(viewId) {
+            return JSON.stringify({
+                id: viewId,
+                background: { isSolid: state.isSolid, colors: state.colors, solid: state.solidColor, orientation: state.orientation },
+                shape: { radius: state.radius, individual: state.individualCorners },
+                border: { width: state.strokeWidth, color: state.strokeColor },
+                effects: { elevation: state.elevation, ripple: state.rippleColor }
+            }, null, 2);
         }
 
         function closeModal() { document.getElementById('code-modal').style.display = 'none'; }
 
         function copyToClipboard() {
-            const range = document.createRange();
-            range.selectNode(document.getElementById('code-display'));
-            const sel = window.getSelection();
-            sel.removeAllRanges();
-            sel.addRange(range);
+            const text = document.getElementById('code-display').innerText;
+            const temp = document.createElement('textarea');
+            temp.value = text;
+            document.body.appendChild(temp);
+            temp.select();
             document.execCommand('copy');
-            sel.removeAllRanges();
+            document.body.removeChild(temp);
             const btn = event.target;
             btn.innerText = "COPIED!";
             setTimeout(() => btn.innerText = "Copy All", 2000);
